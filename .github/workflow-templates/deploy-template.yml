@@ -1,0 +1,53 @@
+name: Advanced Workflow Template
+
+on:
+  workflow_dispatch:
+    inputs:
+      my_name:
+        description: "Enter your name (used in workflow logs)"
+        required: true
+        default: "Anonymous"
+
+jobs:
+  demo-job:
+    runs-on: self-hosted
+    env:
+      MY_NAME: ${{ github.event.inputs.my_name }}
+      MY_SECRET: ${{ secrets.MY_TEST_SECRET }} # Optional secret
+
+    defaults:
+      run:
+        shell: powershell
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare Script Folder
+        run: |
+          if (-not (Test-Path scripts)) {
+            New-Item -ItemType Directory scripts | Out-Null
+            Write-Host "Created scripts folder"
+          } else {
+            Write-Host "scripts folder already exists"
+          }
+
+      - name: Print Workflow Info
+        run: |
+          Write-Host "=== Running Advanced Workflow Template ==="
+          Write-Host "Actor: $env:GITHUB_ACTOR"
+          Write-Host "Repository: $env:GITHUB_REPOSITORY"
+          Write-Host "Hello, my name is $env:MY_NAME"
+
+      - name: Check Optional Secret
+        run: |
+          if ($env:MY_SECRET) {
+            Write-Host "Secret provided (masked in logs): $env:MY_SECRET"
+          } else {
+            Write-Host "No secret provided"
+          }
+
+      - name: Save Info to scripts folder
+        run: |
+          "Hello $env:MY_NAME, workflow completed successfully!" | Set-Content scripts\result.txt
+          Write-Host "Result saved to scripts\result.txt"

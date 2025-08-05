@@ -1,0 +1,8 @@
+{
+    "name": "Advanced Workflow Template",
+    "description": "Runs on self-hosted Windows, creates scripts folder, prints env & secrets",
+    "iconName": "rocket",
+    "categories": ["Deployment", "Utilities"],
+    "filePatterns": ["package.json", "Dockerfile"]
+  }
+  
