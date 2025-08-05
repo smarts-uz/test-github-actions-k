@@ -1,0 +1,20 @@
+name: Test Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  test_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print event name
+        run: echo "Workflow triggered by ${{ github.event_name }}"
