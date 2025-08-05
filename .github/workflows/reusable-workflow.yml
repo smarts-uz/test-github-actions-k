@@ -1,14 +1,14 @@
 name: Reusable Workflow Demo
 
 on:
-  workflow_call: # Makes it reusable
+  workflow_call:
     inputs:
       environment:
         description: 'Target environment name'
         required: true
         type: string
     secrets:
-      API_KEY:
+      API_KEY:  # must match the caller
         required: false
 
 jobs:
@@ -23,9 +23,9 @@ jobs:
           Write-Host "Repository: $env:GITHUB_REPOSITORY"
 
       - name: Show Secret (if provided)
-        if: ${{ secrets.MY_TEST_SECRET != '' }}
+        if: ${{ secrets.API_KEY != '' }}
         shell: powershell
-        run: |
-          Write-Host "MY_TEST_SECRET is provided (masked in logs): $env:MY_TEST_SECRET"
         env:
-          MY_TEST_SECRET: ${{ secrets.MY_TEST_SECRET }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          Write-Host "API_KEY is provided (masked in logs): $env:API_KEY"
