@@ -1,0 +1,47 @@
+name: Use Variables Demo (Windows)
+
+on:
+  workflow_dispatch:
+
+env: # Workflow-level env variable
+  WORKFLOW_LEVEL_VAR: "Workflow-Level-Value"
+
+jobs:
+  use-variables:
+    runs-on: self-hosted
+    env:
+      JOB_LEVEL_VAR: "Job-Level-Value"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 1. Show default GitHub variables
+      - name: Show Default Variables
+        shell: powershell
+        run: |
+          Write-Host "Repository: $env:GITHUB_REPOSITORY"
+          Write-Host "Runner OS: $env:RUNNER_OS"
+          Write-Host "Workflow Name: $env:GITHUB_WORKFLOW"
+
+      # 2. Show workflow/job-level variables
+      - name: Show Custom Variables
+        shell: powershell
+        run: |
+          Write-Host "Workflow Level Var: $env:WORKFLOW_LEVEL_VAR"
+          Write-Host "Job Level Var: $env:JOB_LEVEL_VAR"
+
+      # 3. Use repository variable
+      - name: Show Repository Variable
+        shell: powershell
+        env:
+          MY_TEST_VARIABLE: ${{ vars.MY_TEST_VARIABLE }}
+        run: |
+          Write-Host "Repository Variable Value: $env:MY_TEST_VARIABLE"
+
+      # 4. Create step-level variable and show it
+      - name: Step-Level Variable
+        shell: powershell
+        env:
+          STEP_LEVEL_VAR: "Step-Level-Value"
+        run: |
+          Write-Host "Step Level Var: $env:STEP_LEVEL_VAR"
