@@ -1,21 +1,21 @@
-name: Test Container on Self-Hosted Runner
+name: Test Docker on Windows Runner
 
 on:
-  workflow_dispatch: # Manual trigger for testing
+  workflow_dispatch:
 
 jobs:
-  container-job:
-    runs-on: self-hosted
-    container:
-      image: ubuntu:22.04  # or any custom image
+  run-in-docker:
+    runs-on: self-hosted  # Your Windows self-hosted runner
     steps:
-      - name: Check OS inside container
-        run: |
-          echo "Runner hostname: $(hostname)"
-          echo "OS release:"
-          cat /etc/os-release
+      - name: Check runner OS
+        run: systeminfo | findstr /B /C:"OS"
 
-      - name: Test Docker functionality
+      - name: Pull Ubuntu container
+        run: docker pull ubuntu:22.04
+
+      - name: Run command inside Ubuntu container
+        run: docker run --rm ubuntu:22.04 cat /etc/os-release
+
+      - name: Run multiple commands in container
         run: |
-          apt-get update && apt-get install -y curl
-          curl --version
+          docker run --rm ubuntu:22.04 bash -c "apt-get update && apt-get install -y curl && curl --version"
