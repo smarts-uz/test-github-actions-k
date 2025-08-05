@@ -9,4 +9,4 @@ jobs:
     with:
       environment: staging
     secrets:
-      MY_NAME: ${{ vars.MY_NAME }} # Optional secret for testing
+      API_KEY: ${{ secrets.MY_TEST_SECRET }} # Optional secret for testing
