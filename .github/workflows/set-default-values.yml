@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1️⃣ Check if 'scripts' exists in repo root; create if missing
+      # 1️⃣ Ensure 'scripts' folder exists in repo root
       - name: Ensure Scripts Folder Exists
         shell: powershell
         working-directory: .
@@ -28,15 +28,28 @@ jobs:
             Write-Host "Scripts folder already exists. Skipping creation."
           }
 
-      # 2️⃣ Create a script inside the folder
-      - name: Create Hello Script
+      # 2️⃣ Check for existing scripts and create hello.ps1 only if none exist
+      - name: Ensure At Least One Script Exists
         run: |
-          "Write-Host 'Hello from default working directory!'" | Set-Content hello.ps1
+          $existingScripts = Get-ChildItem -Path . -Filter *.ps1 -File
+          if ($existingScripts.Count -gt 0) {
+            Write-Host "Found existing script(s):"
+            $existingScripts | ForEach-Object { Write-Host $_.Name }
+          } else {
+            Write-Host "No scripts found. Creating hello.ps1..."
+            "Write-Host 'Hello from default working directory!'" | Set-Content hello.ps1
+          }
 
-      # 3️⃣ Run the script (using job defaults automatically)
-      - name: Run Script from Default Directory
+      # 3️⃣ Run the first script found in the folder
+      - name: Run Existing Script from Default Directory
         run: |
-          .\hello.ps1
+          $script = Get-ChildItem -Path . -Filter *.ps1 -File | Select-Object -First 1
+          if ($null -ne $script) {
+            Write-Host "Running script: $($script.Name)"
+            & .\$($script.Name)
+          } else {
+            Write-Host "No script found to run."
+          }
 
       # 4️⃣ Show current directory
       - name: Show Current Directory
