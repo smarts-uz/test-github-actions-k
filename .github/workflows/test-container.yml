@@ -1,0 +1,21 @@
+name: Test Container on Self-Hosted Runner
+
+on:
+  workflow_dispatch: # Manual trigger for testing
+
+jobs:
+  container-job:
+    runs-on: self-hosted
+    container:
+      image: ubuntu:22.04  # or any custom image
+    steps:
+      - name: Check OS inside container
+        run: |
+          echo "Runner hostname: $(hostname)"
+          echo "OS release:"
+          cat /etc/os-release
+
+      - name: Test Docker functionality
+        run: |
+          apt-get update && apt-get install -y curl
+          curl --version
