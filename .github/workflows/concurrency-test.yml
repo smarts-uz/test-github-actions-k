@@ -1,0 +1,23 @@
+name: Concurrency Test
+
+on:
+  workflow_dispatch: # allows manual triggers for testing
+
+concurrency:
+  group: concurrency-test-${{ github.ref }} # group by branch
+  cancel-in-progress: true                  # cancel previous runs
+
+jobs:
+  simulate-long-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start job
+        run: echo "Starting job on branch $GITHUB_REF"
+
+      - name: Simulate long process
+        run: |
+          echo "Sleeping for 2 minutes..."
+          sleep 120
+
+      - name: Job finished
+        run: echo "Job finished on branch $GITHUB_REF"
