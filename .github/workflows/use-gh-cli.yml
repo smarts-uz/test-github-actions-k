@@ -1,5 +1,4 @@
-name: Use GitHub CLI Demo (Windows)
-
+name: Use GitHub CLI
 on:
   workflow_dispatch:
 
@@ -8,20 +7,28 @@ jobs:
     runs-on: self-hosted # Windows runner
 
     steps:
-      # 1. Checkout the repo
+      # 1. Checkout repository
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Install GitHub CLI if not already installed
+      # 2. Install GitHub CLI and fix PATH
       - name: Install GitHub CLI (Windows)
         shell: powershell
         run: |
-          if (-Not (Get-Command gh -ErrorAction SilentlyContinue)) {
-            choco install gh -y
-          }
+          Write-Host "=== Installing GitHub CLI ==="
+          
+          # Force reinstall to ensure it's available
+          choco install gh -y --force
+
+          # Update PATH for current session
+          $env:PATH = "C:\ProgramData\chocolatey\bin;C:\Program Files\GitHub CLI;$env:PATH"
+          [Environment]::SetEnvironmentVariable('PATH', $env:PATH, 'Process')
+
+          # Verify gh command
+          Get-Command gh | Format-List
           gh --version
 
-      # 3. Authenticate with GitHub CLI using GITHUB_TOKEN
+      # 3. Authenticate GitHub CLI with GITHUB_TOKEN
       - name: Authenticate GH CLI
         shell: powershell
         run: |
@@ -29,7 +36,7 @@ jobs:
           $env:GITHUB_TOKEN | gh auth login --with-token
           gh auth status
 
-      # 4. List the first 5 issues in this repo
+      # 4. List first 5 issues
       - name: List Issues
         shell: powershell
         run: gh issue list --limit 5
@@ -39,5 +46,5 @@ jobs:
         shell: powershell
         run: |
           $title = "Automated Test Issue $(Get-Date -Format 'yyyy-MM-dd_HH-mm-ss')"
-          $body = "This issue was created automatically by a GitHub Actions workflow using GitHub CLI on Windows."
+          $body = "This issue was created automatically by a GitHub Actions workflow using GitHub CLI on Windows self-hosted runner."
           gh issue create --title "$title" --body "$body"
