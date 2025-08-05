@@ -1,0 +1,31 @@
+name: Deploy to Staging Environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    environment:
+      name: staging            # Target environment
+      url: https://example.com  # Optional deployment URL shown in UI
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Print Deployment Info
+        shell: powershell
+        run: |
+          Write-Host "=== Deploying to STAGING environment ==="
+          Write-Host "Actor: $env:GITHUB_ACTOR"
+          Write-Host "Repository: $env:GITHUB_REPOSITORY"
+          Write-Host "Environment Name: staging"
+
+      # Example: Using an environment secret
+      - name: Use Environment Secret
+        shell: powershell
+        env:
+          STAGING_SECRET: ${{ vars.MY_NAME }}
+        run: |
+          Write-Host "My name is: $env:STAGING_SECRET"
