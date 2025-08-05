@@ -1,10 +1,14 @@
-name: Use GitHub CLI
+name: Use GitHub CLI Demo (Windows GH_TOKEN)
+
 on:
   workflow_dispatch:
 
 jobs:
   gh-cli-test:
-    runs-on: self-hosted # Windows runner
+    runs-on: self-hosted
+
+    env:
+      GH_TOKEN: ${{ github.token }}  # Required for GitHub CLI in Actions
 
     steps:
       - name: Checkout
@@ -15,15 +19,13 @@ jobs:
         run: |
           Write-Host "=== Installing GitHub CLI ==="
           choco install gh -y --force
-          # Verify location
+          # Verify gh.exe location
           Get-ChildItem "C:\Program Files\GitHub CLI" -Recurse | Where-Object { $_.Name -eq 'gh.exe' }
 
-      - name: Authenticate GH CLI
+      - name: Show Auth Status
         shell: powershell
         run: |
           $GH = "C:\Program Files\GitHub CLI\gh.exe"
-          $env:GITHUB_TOKEN = "${{ github.token }}"
-          $env:GITHUB_TOKEN | & $GH auth login --with-token
           & $GH auth status
 
       - name: List Issues
@@ -37,5 +39,5 @@ jobs:
         run: |
           $GH = "C:\Program Files\GitHub CLI\gh.exe"
           $title = "Automated Test Issue $(Get-Date -Format 'yyyy-MM-dd_HH-mm-ss')"
-          $body = "Created automatically using GitHub CLI on Windows self-hosted runner."
+          $body = "Created automatically using GitHub CLI on Windows self-hosted runner with GH_TOKEN env."
           & $GH issue create --title "$title" --body "$body"
