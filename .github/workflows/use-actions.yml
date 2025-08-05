@@ -1,0 +1,40 @@
+name: Use and Customize Actions
+
+on:
+  workflow_dispatch: # Manual trigger for testing
+
+jobs:
+  test-actions:
+    runs-on: self-hosted # or ubuntu-latest if you want cloud
+    steps:
+      # 1. Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Node.js (customizing an action)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # customize node version
+
+      # 3. Cache Node.js dependencies (customizing keys)
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # 4. Run a script (your repo must have package.json for this to work)
+      - name: Install & Test
+        run: |
+          npm install
+          npm test || echo "Tests skipped, no test script found"
+
+      # 5. Upload an artifact (customize artifact name)
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-files
+          path: ./
