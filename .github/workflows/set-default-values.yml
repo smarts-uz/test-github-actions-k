@@ -1,0 +1,31 @@
+name: Set Default Values Demo (Windows)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  demo-job:
+    runs-on: self-hosted
+    defaults:
+      run:
+        shell: powershell
+        working-directory: scripts  # All steps will run from this folder by default
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Create the folder and a test script dynamically
+      - name: Prepare Script Folder
+        run: |
+          if (-not (Test-Path scripts)) { New-Item -ItemType Directory scripts | Out-Null }
+          "Write-Host 'Hello from default working directory!'" | Set-Content scripts\hello.ps1
+
+      # Step 1 will automatically run in scripts/ folder with PowerShell
+      - name: Run Script from Default Directory
+        run: |
+          .\hello.ps1
+
+      # Step 2 also inherits the default shell and working directory
+      - name: Show Current Directory
+        run: |
+          Write-Host "Current Directory: $(Get-Location)"
