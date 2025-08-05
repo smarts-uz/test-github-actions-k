@@ -1,0 +1,31 @@
+name: Matrix Job Variations Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-variations:
+    runs-on: self-hosted
+
+    strategy:
+      matrix:
+        node-version: [18, 20]        # Test multiple Node.js versions
+        app-env: [staging, production] # Test multiple environments
+      fail-fast: false  # Run all combinations even if one fails
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Print Matrix Info
+        shell: powershell
+        run: |
+          Write-Host "=== Matrix Job Running ==="
+          Write-Host "Node.js Version: ${{ matrix.node-version }}"
+          Write-Host "Environment: ${{ matrix.app-env }}"
+          Write-Host "Runner: $env:RUNNER_NAME"
+
+      - name: Simulate Test
+        shell: powershell
+        run: |
+          Write-Host "Simulating job variation for Node ${{ matrix.node-version }} in ${{ matrix.app-env }}"
