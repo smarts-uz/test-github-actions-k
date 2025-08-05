@@ -8,7 +8,7 @@ on:
         required: true
         type: string
     secrets:
-      API_KEY:  # must match the caller
+      API_KEY:
         required: false
 
 jobs:
@@ -22,10 +22,13 @@ jobs:
           Write-Host "Environment input: ${{ inputs.environment }}"
           Write-Host "Repository: $env:GITHUB_REPOSITORY"
 
-      - name: Show Secret (if provided)
-        if: ${{ secrets.API_KEY != '' }}
+      - name: Show Secret (runtime check)
         shell: powershell
         env:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
-          Write-Host "API_KEY is provided (masked in logs): $env:API_KEY"
+          if ($env:API_KEY) {
+            Write-Host "API_KEY is provided (masked in logs): $env:API_KEY"
+          } else {
+            Write-Host "API_KEY is not provided"
+          }
