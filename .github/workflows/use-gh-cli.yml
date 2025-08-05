@@ -7,44 +7,35 @@ jobs:
     runs-on: self-hosted # Windows runner
 
     steps:
-      # 1. Checkout repository
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Install GitHub CLI and fix PATH
       - name: Install GitHub CLI (Windows)
         shell: powershell
         run: |
           Write-Host "=== Installing GitHub CLI ==="
-          
-          # Force reinstall to ensure it's available
           choco install gh -y --force
+          # Verify location
+          Get-ChildItem "C:\Program Files\GitHub CLI" -Recurse | Where-Object { $_.Name -eq 'gh.exe' }
 
-          # Update PATH for current session
-          $env:PATH = "C:\ProgramData\chocolatey\bin;C:\Program Files\GitHub CLI;$env:PATH"
-          [Environment]::SetEnvironmentVariable('PATH', $env:PATH, 'Process')
-
-          # Verify gh command
-          Get-Command gh | Format-List
-          gh --version
-
-      # 3. Authenticate GitHub CLI with GITHUB_TOKEN
       - name: Authenticate GH CLI
         shell: powershell
         run: |
+          $GH = "C:\Program Files\GitHub CLI\gh.exe"
           $env:GITHUB_TOKEN = "${{ github.token }}"
-          $env:GITHUB_TOKEN | gh auth login --with-token
-          gh auth status
+          $env:GITHUB_TOKEN | & $GH auth login --with-token
+          & $GH auth status
 
-      # 4. List first 5 issues
       - name: List Issues
         shell: powershell
-        run: gh issue list --limit 5
+        run: |
+          $GH = "C:\Program Files\GitHub CLI\gh.exe"
+          & $GH issue list --limit 5
 
-      # 5. Create a new test issue
       - name: Create Test Issue
         shell: powershell
         run: |
+          $GH = "C:\Program Files\GitHub CLI\gh.exe"
           $title = "Automated Test Issue $(Get-Date -Format 'yyyy-MM-dd_HH-mm-ss')"
-          $body = "This issue was created automatically by a GitHub Actions workflow using GitHub CLI on Windows self-hosted runner."
-          gh issue create --title "$title" --body "$body"
+          $body = "Created automatically using GitHub CLI on Windows self-hosted runner."
+          & $GH issue create --title "$title" --body "$body"
