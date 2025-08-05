@@ -1,0 +1,28 @@
+name: Pass Job Outputs Demo (Windows)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job1:
+    runs-on: self-hosted
+    outputs:
+      GENERATED_MESSAGE: ${{ steps.generate.outputs.message }}
+    steps:
+      - name: Generate Output
+        id: generate
+        shell: powershell
+        run: |
+          $msg = "Hello Komoliddin"
+          echo "message=$msg" >> $env:GITHUB_OUTPUT
+          Write-Host "Job1 generated message: $msg"
+
+  job2:
+    runs-on: self-hosted
+    needs: job1
+    steps:
+      - name: Use Output from Job1
+        shell: powershell
+        run: |
+          $messageFromJob1 = "${{ needs.job1.outputs.GENERATED_MESSAGE }}"
+          Write-Host "Received output from Job1: $messageFromJob1"
