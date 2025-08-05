@@ -1,0 +1,40 @@
+name: Add Scripts Demo (Windows)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-scripts:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 1. Inline PowerShell script
+      - name: Inline Script
+        shell: powershell
+        run: |
+          Write-Host "=== Inline PowerShell Script Running ==="
+          Write-Host "Runner OS: $env:RUNNER_OS"
+          Write-Host "Workflow triggered successfully!"
+
+      # 2. Save a script dynamically and run it
+      - name: Create Script File
+        shell: powershell
+        run: |
+          $scriptPath = "$(Get-Location)\hello.ps1"
+          @"
+          Write-Host 'Hello from GitHub Actions PowerShell Script!'
+          Write-Host 'Current Directory: ' (Get-Location)
+          "@ | Set-Content -Path $scriptPath
+          Write-Host "Script file created: $scriptPath"
+
+      - name: Run Script File
+        shell: powershell
+        run: |
+          .\hello.ps1
+
+      # 3. Run a script from your repository (if you have it)
+      # - name: Run Existing Script
+      #   shell: powershell
+      #   run: .\scripts\myscript.ps1
