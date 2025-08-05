@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # customize node version
+          node-version: '22'  # customize node version
 
       # 3. Cache Node.js dependencies (customizing keys)
       - name: Cache npm dependencies
