@@ -1,8 +1,8 @@
 {
-    "name": "Advanced Workflow Template",
-    "description": "Runs on self-hosted Windows, creates scripts folder, prints env & secrets",
+    "name": "Deploy Template Workflow",
+    "description": "A starter workflow template for deployment on self-hosted runner",
     "iconName": "rocket",
-    "categories": ["Deployment", "Utilities"],
-    "filePatterns": ["package.json", "Dockerfile"]
+    "categories": ["Deployment", "Continuous integration"],
+    "filePatterns": ["package.json$", "^Dockerfile", ".*\\.md$"]
   }
   
