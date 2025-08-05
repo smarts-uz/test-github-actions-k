@@ -1,5 +1,4 @@
-name: Use GitHub CLI Demo (Windows GH_TOKEN)
-
+name: Use GitHub CLI Demo (Windows)
 on:
   workflow_dispatch:
 
