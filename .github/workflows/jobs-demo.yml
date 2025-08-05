@@ -1,0 +1,30 @@
+name: Jobs Demo (Self-Hosted)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job1:
+    runs-on: self-hosted
+    outputs:
+      message: ${{ steps.step1.outputs.message }}
+    steps:
+      - name: Step 1 - Generate output
+        id: step1
+        run: echo "message=Hello from Job 1!" >> $GITHUB_OUTPUT
+
+  job2:
+    runs-on: self-hosted
+    needs: job1
+    steps:
+      - name: Step 2 - Use output from Job 1
+        run: |
+          echo "Job 1 said: ${{ needs.job1.outputs.message }}"
+
+  job3:
+    runs-on: self-hosted
+    needs: [job1, job2]
+    steps:
+      - name: Step 3 - Final job
+        run: |
+          echo "Job 3 runs after Job 1 and Job 2!"
