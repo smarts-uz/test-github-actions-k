@@ -1,4 +1,4 @@
-name: Set Default Values Demo (Windows Fixed)
+name: Set Default Values Demo (Windows Auto-Create Folder)
 
 on:
   workflow_dispatch:
@@ -6,26 +6,41 @@ on:
 jobs:
   demo-job:
     runs-on: self-hosted
+
+    defaults:
+      run:
+        shell: powershell
+        working-directory: scripts  # All steps run here by default
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1️⃣ Create folder first in repo root
-      - name: Prepare Script Folder
+      # 1️⃣ Check if 'scripts' exists in repo root; create if missing
+      - name: Ensure Scripts Folder Exists
         shell: powershell
+        working-directory: .
         run: |
-          if (-not (Test-Path scripts)) { New-Item -ItemType Directory scripts | Out-Null }
-          "Write-Host 'Hello from default working directory!'" | Set-Content scripts\hello.ps1
+          if (-not (Test-Path scripts)) {
+            Write-Host "Scripts folder not found. Creating it..."
+            New-Item -ItemType Directory scripts | Out-Null
+          } else {
+            Write-Host "Scripts folder already exists. Skipping creation."
+          }
 
-      # 2️⃣ From here, use defaults to always run in scripts/
+      # 2️⃣ Create a script inside the folder
+      - name: Create Hello Script
+        run: |
+          "Write-Host 'Hello from default working directory!'" | Set-Content hello.ps1
+
+      # 3️⃣ Run the script (using job defaults automatically)
       - name: Run Script from Default Directory
-        shell: powershell
-        working-directory: scripts
         run: |
           .\hello.ps1
 
+      # 4️⃣ Show current directory
       - name: Show Current Directory
-        shell: powershell
-        working-directory: scripts
         run: |
           Write-Host "Current Directory: $(Get-Location)"
+          Write-Host "Files:"
+          Get-ChildItem
