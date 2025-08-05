@@ -14,7 +14,7 @@ on:
 
 jobs:
   check-input:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Show inputs
         run: |
@@ -22,7 +22,7 @@ jobs:
           echo "Deploy env: ${{ github.event.inputs.deploy_env }}"
 
   tests:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: check-input
     if: ${{ github.event.inputs.run_tests == 'yes' }} # Only run if input is yes
     steps:
@@ -30,7 +30,7 @@ jobs:
         run: echo "✅ Tests are running!"
 
   deploy-dev:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [check-input, tests]
     if: ${{ github.event.inputs.deploy_env == 'dev' }}
     steps:
@@ -38,7 +38,7 @@ jobs:
         run: echo "🚀 Deploying to Development Environment"
 
   deploy-prod:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [check-input, tests]
     if: ${{ github.event.inputs.deploy_env == 'prod' && github.event.inputs.run_tests == 'yes' }}
     steps:

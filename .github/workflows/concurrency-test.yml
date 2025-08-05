@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   simulate-long-job:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Start job
         run: echo "Starting job on branch $GITHUB_REF"
