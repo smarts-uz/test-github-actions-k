@@ -1,0 +1,15 @@
+name: Generate .env
+
+on:
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  create-env:
+    runs-on: self-hosted # or ubuntu-latest if using GitHub runner
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate .env file from secret
+        run: |
+          echo "MY_NAME=${{ secrets.MY_NAME }}" > .env
