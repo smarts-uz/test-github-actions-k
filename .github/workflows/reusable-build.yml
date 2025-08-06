@@ -1,0 +1,23 @@
+name: reusable-build
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Test content" > ${{ inputs['artifact-name'] }}
+      - name: Generate attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ${{ inputs['artifact-name'] }}

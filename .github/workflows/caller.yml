@@ -1,0 +1,14 @@
+name: call-reusable-build
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  call:
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      artifact-name: "reusable-output.txt"
