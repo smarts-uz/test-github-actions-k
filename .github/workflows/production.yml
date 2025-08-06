@@ -1,0 +1,18 @@
+name: Generate .env from Environment Secret
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-env:
+    runs-on: self-hosted
+    environment: staging # <-- use your environment name here
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file from ENV secret
+        run: |
+          echo "${{ secrets.ENV }}" > .env
+          cat .env
